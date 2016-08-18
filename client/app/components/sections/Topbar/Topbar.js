@@ -5,7 +5,7 @@ import * as placesUtils from '../../../utils/places';
 import * as urlUtils from '../../../utils/url';
 
 import { t } from '../../../utils/i18n';
-import { routes as routesProp, marketplaceContext } from '../../../utils/PropTypes';
+import { routes as routesProp } from '../../../utils/PropTypes';
 import css from './Topbar.css';
 import styleVariables from '../../../assets/styles/variables';
 
@@ -154,7 +154,8 @@ const createQuery = (searchParams, queryString) => {
 
 class Topbar extends Component {
   render() {
-    const { location, marketplace_color1, loggedInUsername } = { ...DEFAULT_CONTEXT, ...this.props.marketplaceContext };
+    const { location, marketplace_color1 } = { ...DEFAULT_CONTEXT, ...this.props.marketplace };
+    const { loggedInUsername } = this.props.user || {};
 
     const menuProps = this.props.menu ?
       Object.assign({}, this.props.menu, {
@@ -208,7 +209,7 @@ class Topbar extends Component {
     const mobileMenuAvatarProps = this.props.avatarDropdown && loggedInUsername ?
             { ...this.props.avatarDropdown.avatar, ...{ url: profileRoute } } :
             null;
-    const isAdmin = !!(this.props.isAdmin && loggedInUsername);
+    const isAdmin = !!(this.props.user && this.props.user.isAdmin && loggedInUsername);
 
     const mobileMenuLanguageProps = hasMultipleLanguages ?
       Object.assign({}, {
@@ -351,8 +352,14 @@ Topbar.propTypes = {
   }),
   newListingButton: object,
   routes: routesProp,
-  marketplaceContext,
-  isAdmin: PropTypes.bool,
+  marketplace: PropTypes.shape({
+    marketplace_color1: string,
+    location: string,
+  }),
+  user: PropTypes.shape({
+    loggedInUsername: string,
+    isAdmin: PropTypes.bool,
+  }),
   unReadMessagesCount: PropTypes.number,
 };
 
